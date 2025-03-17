@@ -1,1 +1,38 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+// Диалоговое окно
+mat-dialog-container.mat-dialog-container {
+  padding: 0;
+
+  .draggable-container {
+    mat-toolbar {
+      & > :first-child {
+        margin-right: auto;
+      }
+    }
+
+    mat-dialog-content {
+      padding: 24px;
+      margin: 0;
+
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
+}
+
+// Уведомления (snackbar)
+.app-success-snackbar {
+  background-color: #228B22FF;
+  color: #ffffff;
+}
+
+.app-warn-snackbar {
+  background-color: #F44336;
+  color: #ffffff;
+}

@@ -1,0 +1,16 @@
+<div
+  cdkDropList
+  class="app-task-list"
+  [cdkDropListData]="tasks"
+  [cdkDropListConnectedTo]="dropList"
+  (cdkDropListDropped)="drop($event)"
+>
+  <app-task-item
+    *ngFor="let task of tasks"
+    [task]="task"
+    (openItem)="openItem.emit($event)"
+    (editItem)="editItem.emit($event)"
+    (removeItem)="removeTask($event)"
+    (statusChange)="statusChange($event)"
+  ></app-task-item>
+</div>

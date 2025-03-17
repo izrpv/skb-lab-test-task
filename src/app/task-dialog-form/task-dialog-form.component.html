@@ -1,0 +1,51 @@
+<div class="draggable-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+  <mat-toolbar cdkDragHandle color="primary" class="app-dialog-header">
+    <span>{{ dialogTitle }}</span>
+    <button mat-icon-button (click)="dialogRef.close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <mat-dialog-content>
+    <form [formGroup]="formGroup">
+      <mat-checkbox formControlName="status" [disabled]="readOnly">
+        Статус задачи
+        <span class="app-status-description"
+          >({{ formGroup.get('status')?.value ? 'Выполнена' : 'Не выполнена' }})</span
+        >
+      </mat-checkbox>
+      <mat-form-field>
+        <mat-label>Заголовок</mat-label>
+        <input
+          matInput
+          placeholder="Введите заголовок"
+          formControlName="title"
+          [readonly]="readOnly"
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Описание</mat-label>
+        <textarea
+          matInput
+          placeholder="Введите описание"
+          formControlName="description"
+          [readonly]="readOnly"
+        ></textarea>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Срок</mat-label>
+        <input matInput formControlName="deadline" [matDatepicker]="picker" [readonly]="true" />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="picker"
+          [disabled]="readOnly"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </form>
+    <mat-dialog-actions class="app-dialog-actions">
+      <button mat-button (click)="save()" [disabled]="!isFromValid">Сохранить</button>
+      <button mat-button (click)="dialogRef.close()" color="warn">Закрыть</button>
+    </mat-dialog-actions>
+  </mat-dialog-content>
+</div>

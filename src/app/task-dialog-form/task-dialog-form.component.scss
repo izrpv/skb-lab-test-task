@@ -1,0 +1,15 @@
+:host {
+  .app-dialog-header {
+    cursor: move;
+  }
+
+  .app-status-description {
+    color: gray;
+    font-style: italic;
+  }
+
+  .app-dialog-actions {
+    display: flex;
+    justify-content: space-between;
+  }
+}

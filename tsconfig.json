@@ -1,10 +1,16 @@
 /* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
   "compileOnSave": false,
+  "include": ["src/**/*.ts"],
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": "./src/app",
+    "paths": {
+      "@utils/*": ["./utils/*"]
+    },
     "outDir": "./dist/out-tsc",
+    "strictNullChecks": false,
     "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": false,
     "strict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
