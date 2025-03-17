@@ -49,6 +49,12 @@ export class TaskDialogFormComponent {
   }
 
   save(): void {
+    const formGroup = this.formGroup;
+
+    if (this.isNew) {
+      formGroup.patchValue({ id: Date.now() });
+    }
+
     this.dialogRef.close(this.formGroup.value);
   }
 }
