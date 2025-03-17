@@ -8,6 +8,7 @@ import { DestroyService } from './services/destroy.service';
 import { getItemIndexById } from '@utils/functions';
 import { MatFormDialogData } from './types/mat-form-dialog-data';
 import { NotifyService } from './services/notify.service';
+import { TasksChangeEvent } from './task-list/types';
 
 @Component({
   selector: 'app-root',
@@ -96,5 +97,15 @@ export class AppComponent {
     );
 
     dialogRef.afterClosed().pipe(takeUntil(this.destroy$)).subscribe();
+  }
+
+  itemsChange({ completedTasks, uncompletedTasks }: TasksChangeEvent): void {
+    if (completedTasks) {
+      this.completedTasks = completedTasks;
+    }
+
+    if (uncompletedTasks) {
+      this.uncompletedTasks = uncompletedTasks;
+    }
   }
 }

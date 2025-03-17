@@ -21,6 +21,7 @@ import { takeUntil } from 'rxjs/operators';
 import { DestroyService } from '../services/destroy.service';
 import { MatConfirmDialogData } from '../types/mat-confirm-dialog-data';
 import { NotifyService } from '../services/notify.service';
+import { TasksChangeEvent } from './types';
 
 @Component({
   selector: 'app-task-list',
@@ -36,6 +37,10 @@ export class TaskListComponent implements AfterViewInit {
 
   @Output() editItem = new EventEmitter<Task>();
   @Output() openItem = new EventEmitter<Task>();
+
+  // Т.к. обращаться к элементам tasks - не лучшая практика, то используем эмиттер,
+  // где родительский компонент будет сам отвечать за обновление задач
+  @Output() itemsChange = new EventEmitter<TasksChangeEvent>();
 
   dropList: CdkDropList;
 
@@ -56,21 +61,47 @@ export class TaskListComponent implements AfterViewInit {
 
   drop(event: CdkDragDrop<Task[]>): void {
     const { previousContainer, container, previousIndex, currentIndex } = event;
+    const containerData = [...container.data];
+    const previousContainerData = [...previousContainer.data];
 
     if (previousContainer === container) {
-      moveItemInArray(container.data, previousIndex, currentIndex);
+      const tasks = previousContainerData[previousIndex].status
+        ? 'completedTasks'
+        : 'uncompletedTasks';
+
+      moveItemInArray(containerData, previousIndex, currentIndex);
+      this.itemsChange.emit({ [tasks]: containerData });
+
       return;
     }
 
-    const previousData = previousContainer.data[previousIndex];
+    const previousItem = previousContainerData[previousIndex];
 
-    previousData.status = !previousData.status;
-    transferArrayItem(previousContainer.data, container.data, previousIndex, currentIndex);
+    previousItem.status = !previousItem.status;
+    transferArrayItem(previousContainerData, containerData, previousIndex, currentIndex);
+
+    const completedTasks = previousItem.status ? containerData : previousContainerData;
+    const uncompletedTasks = previousItem.status ? previousContainerData : containerData;
+
+    this.itemsChange.emit({
+      completedTasks,
+      uncompletedTasks,
+    });
   }
 
   statusChange(task: Task): void {
-    removeItemById(this.tasks, task);
-    this.linkedTaskList.tasks.unshift(task);
+    const tasks = [...this.tasks];
+    const linkedTasks = [...this.linkedTaskList.tasks];
+    removeItemById(tasks, task);
+    linkedTasks.unshift(task);
+
+    const completedTasks = task.status ? linkedTasks : tasks;
+    const uncompletedTasks = task.status ? tasks : linkedTasks;
+
+    this.itemsChange.emit({
+      completedTasks,
+      uncompletedTasks,
+    });
   }
 
   removeTask(task: Task): void {
@@ -89,7 +120,12 @@ export class TaskListComponent implements AfterViewInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe((res: boolean) => {
         if (res) {
-          removeItemById(this.tasks, task);
+          const tasks = [...this.tasks];
+
+          removeItemById(tasks, task);
+          this.itemsChange.emit({
+            [task.status ? 'completedTasks' : 'uncompletedTasks']: tasks,
+          });
           this.notifyService.success(`Задача "${task.title}" успешно удалена!`);
         }
       });

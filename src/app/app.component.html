@@ -13,6 +13,7 @@
     [linkedTaskList]="completedTasksRef"
     (openItem)="open($event)"
     (editItem)="editTask($event)"
+    (itemsChange)="itemsChange($event)"
   ></app-task-list>
 </div>
 <div class="app-tasks-list-container app-completed-tasks-container">
@@ -25,5 +26,6 @@
     [linkedTaskList]="uncompletedTasksRef"
     (openItem)="open($event)"
     (editItem)="editTask($event)"
+    (itemsChange)="itemsChange($event)"
   ></app-task-list>
 </div>
