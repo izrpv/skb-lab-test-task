@@ -1,4 +1,4 @@
-<div cdkDrag class="app-task-item {{ getDeadlineColor(task) }}">
+<div cdkDrag class="app-task-item" [ngClass]="getDeadlineColor(task)">
   <mat-icon cdkDragHandle class="app-task-item__drag-indicator">drag_indicator</mat-icon>
   <mat-checkbox
     [ngModel]="task.status"
@@ -8,14 +8,21 @@
   <div [class]="['app-task-item__deadline']">
     {{ task.deadline | date : 'dd.MM.yyyy' }}
   </div>
-  <button mat-icon-button matTooltip="Открыть" (click)="openItem.emit(task)">
-    <mat-icon>remove_red_eye</mat-icon>
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>more_vert</mat-icon>
   </button>
-  <button mat-icon-button matTooltip="Редактировать" (click)="editItem.emit(task)">
-    <mat-icon>edit</mat-icon>
-  </button>
-
-  <button mat-icon-button color="warn" matTooltip="Удалить" (click)="removeItem.emit(task)">
-    <mat-icon>delete</mat-icon>
-  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="openItem.emit(task)">
+      <mat-icon>remove_red_eye</mat-icon>
+      <span>Открыть</span>
+    </button>
+    <button mat-menu-item (click)="editItem.emit(task)">
+      <mat-icon>edit</mat-icon>
+      <span>Редактировать</span>
+    </button>
+    <button mat-menu-item (click)="removeItem.emit(task)">
+      <mat-icon>delete</mat-icon>
+      <span>Удалить</span>
+    </button>
+  </mat-menu>
 </div>
