@@ -40,7 +40,7 @@ export class TaskListComponent implements AfterViewInit {
 
   // Т.к. обращаться к элементам tasks - не лучшая практика, то используем эмиттер,
   // где родительский компонент будет сам отвечать за обновление задач
-  @Output() itemsChange = new EventEmitter<TasksChangeEvent>();
+  @Output() itemsChanged = new EventEmitter<TasksChangeEvent>();
 
   dropList: CdkDropList;
 
@@ -59,46 +59,58 @@ export class TaskListComponent implements AfterViewInit {
     }
   }
 
+  trackByTaskId(_: number, task: Task): number {
+    return task.id;
+  }
+
   drop(event: CdkDragDrop<Task[]>): void {
     const { previousContainer, container, previousIndex, currentIndex } = event;
     const containerData = [...container.data];
     const previousContainerData = [...previousContainer.data];
 
     if (previousContainer === container) {
-      const tasks = previousContainerData[previousIndex].status
-        ? 'completedTasks'
-        : 'uncompletedTasks';
-
-      moveItemInArray(containerData, previousIndex, currentIndex);
-      this.itemsChange.emit({ [tasks]: containerData });
+      this.sameListDrop(containerData, previousIndex, currentIndex);
 
       return;
     }
 
-    const previousItem = previousContainerData[previousIndex];
-
-    previousItem.status = !previousItem.status;
-    transferArrayItem(previousContainerData, containerData, previousIndex, currentIndex);
-
-    const completedTasks = previousItem.status ? containerData : previousContainerData;
-    const uncompletedTasks = previousItem.status ? previousContainerData : containerData;
-
-    this.itemsChange.emit({
-      completedTasks,
-      uncompletedTasks,
-    });
+    this.differentListDrop(previousContainerData, containerData, previousIndex, currentIndex);
   }
 
-  statusChange(task: Task): void {
+  private sameListDrop(data: Task[], previousIndex: number, currentIndex: number): void {
+    const task = data[previousIndex];
+
+    moveItemInArray(data, previousIndex, currentIndex);
+    this.changeItems(task, null, data);
+  }
+
+  private differentListDrop(
+    previousData: Task[],
+    data: Task[],
+    previousIndex: number,
+    currentIndex: number
+  ): void {
+    const previousItem = previousData[previousIndex];
+
+    previousItem.status = !previousItem.status;
+    transferArrayItem(previousData, data, previousIndex, currentIndex);
+    this.changeItems(previousItem, previousData, data);
+  }
+
+  toggleTaskStatus(task: Task): void {
     const tasks = [...this.tasks];
     const linkedTasks = [...this.linkedTaskList.tasks];
-    removeItemById(tasks, task);
+
+    removeItemById(tasks, task.id);
     linkedTasks.unshift(task);
+    this.changeItems(task, tasks, linkedTasks);
+  }
 
-    const completedTasks = task.status ? linkedTasks : tasks;
-    const uncompletedTasks = task.status ? tasks : linkedTasks;
+  changeItems(task: Task, data: Task[], previousData: Task[]): void {
+    const completedTasks = task.status ? previousData : data;
+    const uncompletedTasks = task.status ? data : previousData;
 
-    this.itemsChange.emit({
+    this.itemsChanged.emit({
       completedTasks,
       uncompletedTasks,
     });
@@ -119,15 +131,17 @@ export class TaskListComponent implements AfterViewInit {
       .afterClosed()
       .pipe(takeUntil(this.destroy$))
       .subscribe((res: boolean) => {
-        if (res) {
-          const tasks = [...this.tasks];
-
-          removeItemById(tasks, task);
-          this.itemsChange.emit({
-            [task.status ? 'completedTasks' : 'uncompletedTasks']: tasks,
-          });
-          this.notifyService.success(`Задача "${task.title}" успешно удалена!`);
+        if (!res) {
+          return;
         }
+
+        const tasks = [...this.tasks];
+
+        removeItemById(tasks, task.id);
+        this.notifyService.success(`Задача "${task.title}" успешно удалена!`);
+        this.itemsChanged.emit({
+          [task.status ? 'completedTasks' : 'uncompletedTasks']: tasks,
+        });
       });
   }
 }

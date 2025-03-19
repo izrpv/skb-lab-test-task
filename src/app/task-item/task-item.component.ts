@@ -1,21 +1,21 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { Task } from '../models/task';
 
 @Component({
   selector: 'app-task-item',
   templateUrl: './task-item.component.html',
   styleUrls: ['./task-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskItemComponent {
   @Input() task: Task;
   @Output() openItem = new EventEmitter<Task>();
   @Output() editItem = new EventEmitter<Task>();
   @Output() removeItem = new EventEmitter<Task>();
-  @Output() statusChange = new EventEmitter<Task>();
+  @Output() toggleTaskStatus = new EventEmitter<Task>();
 
-  taskStatusChange(task: Task, value: boolean): void {
-    task.status = value;
-    this.statusChange.emit(task);
+  taskStatusChange(task: Task, status: boolean): void {
+    this.toggleTaskStatus.emit({ ...task, status });
   }
 
   getDeadlineColor(task: Task): string {

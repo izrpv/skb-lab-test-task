@@ -1,18 +1,18 @@
-import { Identifiable } from "../types/identifiable";
+import { Identifiable } from '../types/identifiable';
 
 /**
  * Задача
  */
-export interface Task extends Identifiable<number> {
-    // Статус задачи
-    status: boolean;
+export interface Task extends Identifiable {
+  // Статус задачи
+  status: boolean;
 
-    // Заголовок
-    title: string;
+  // Заголовок
+  title: string;
 
-    // Срок выполнения
-    deadline: Date;
+  // Срок выполнения
+  deadline: Date;
 
-    // Описание
-    description?: string;
+  // Описание
+  description?: string;
 }

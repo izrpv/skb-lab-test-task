@@ -6,11 +6,11 @@
   (cdkDropListDropped)="drop($event)"
 >
   <app-task-item
-    *ngFor="let task of tasks"
+    *ngFor="let task of tasks; trackBy: trackByTaskId"
     [task]="task"
     (openItem)="openItem.emit($event)"
     (editItem)="editItem.emit($event)"
     (removeItem)="removeTask($event)"
-    (statusChange)="statusChange($event)"
+    (toggleTaskStatus)="toggleTaskStatus($event)"
   ></app-task-item>
 </div>

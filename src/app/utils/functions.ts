@@ -1,39 +1,45 @@
-import { Identifiable } from "../types/identifiable";
+import { Identifiable } from '../types/identifiable';
 
 /**
- * Удаляет элемент из массива по его идентификатору.
+ * Удаляет элемент из массива `array` по его идентификатору `id`.
  *
- * @param {Identifiable[]} data - Массив объектов, реализующих интерфейс Identifiable.
- * @param {Identifiable} item - Элемент, который нужно удалить из массива.
- * @returns {void} Ничего не возвращает.
+ * @template T Тип элементов массива. Должен реализовывать `Identifiable`.
+ * @param {T[]} array - Массив объектов, реализующих интерфейс `Identifiable`.
+ * @param {T extends Identifiable<infer Id> ? Id : never} id - Идентификатор элемента, который нужно удалить.
+ * @returns {void} Ничего не возвращает. Мутирует исходный массив.
  *
  * @example
- * const data = [{ id: 1, name: 'Item 1' }, { id: 2, name: 'Item 2' }];
- * const item = { id: 1, name: 'Item 1' };
- * removeItemById(data, item);
+ * const data: Item[] = [{ id: 1, name: 'Item 1' }, { id: 2, name: 'Item 2' }];
+ * removeItemById(data, 1);
  * console.log(data); // [{ id: 2, name: 'Item 2' }]
  */
-export function removeItemById(data: Identifiable[], item: Identifiable): void {
-    const arrayItem = data.find(v => v.id === item.id);
-    const index = data.indexOf(arrayItem);
-    data.splice(index, 1);
+export function removeItemById<T extends Identifiable<any>>(
+  array: T[],
+  id: T extends Identifiable<infer Id> ? Id : never
+): void {
+  const arrayItem = array.find((v) => v.id === id);
+  const index = array.indexOf(arrayItem);
+  array.splice(index, 1);
 }
 
 /**
- * Возвращает индекс элемента в массиве по его идентификатору.
+ * Возвращает индекс элемента в массиве `array` по идентификатору `id`.
  *
- * @param {Identifiable[]} array - Массив объектов, реализующих интерфейс Identifiable.
- * @param {Identifiable} item - Элемент, индекс которого нужно найти.
- * @returns {number} Индекс элемента в массиве. Если элемент не найден, возвращает -1.
+ * @template T Тип элементов массива. Должен реализовывать `Identifiable`.
+ * @param {T[]} array - Массив объектов, реализующих интерфейс `Identifiable`.
+ * @param {T extends Identifiable<infer Id> ? Id : never} id - Идентификатор элемента, индекс которого нужно найти.
+ * @returns {number} Индекс элемента в массиве.
  *
  * @example
- * const array = [{ id: 1, name: 'Item 1' }, { id: 2, name: 'Item 2' }];
- * const item = { id: 1, name: 'Item 1' };
- * const index = getItemIndexById(array, item);
+ * const array: Item[] = [{ id: 1, name: 'Item 1' }, { id: 2, name: 'Item 2' }];
+ * const index = getItemIndexById(array, 1);
  * console.log(index); // 0
  */
-export function getItemIndexById(array: Identifiable[], item: Identifiable): number {
-    const arrayItem = array.find(v => v.id === item.id);
+export function getItemIndexById<T extends Identifiable<any>>(
+  array: T[],
+  id: T extends Identifiable<infer Id> ? Id : never
+): number {
+  const arrayItem = array.find((v) => v.id === id);
 
-    return array.indexOf(arrayItem);
+  return array.indexOf(arrayItem);
 }

@@ -68,7 +68,7 @@ export class AppComponent {
 
         const from = task.status ? this.completedTasks : this.uncompletedTasks;
         const to = updatedTask.status ? this.completedTasks : this.uncompletedTasks;
-        const itemIndex = getItemIndexById(from, updatedTask);
+        const itemIndex = getItemIndexById(from, updatedTask.id);
 
         this.notifyService.success(`Задача "${updatedTask.title}" успешно изменена!`);
 
@@ -99,7 +99,7 @@ export class AppComponent {
     dialogRef.afterClosed().pipe(takeUntil(this.destroy$)).subscribe();
   }
 
-  itemsChange({ completedTasks, uncompletedTasks }: TasksChangeEvent): void {
+  itemsChanged({ completedTasks, uncompletedTasks }: TasksChangeEvent): void {
     if (completedTasks) {
       this.completedTasks = completedTasks;
     }
