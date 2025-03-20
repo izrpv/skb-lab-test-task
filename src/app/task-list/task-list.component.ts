@@ -139,9 +139,7 @@ export class TaskListComponent implements AfterViewInit {
 
         removeItemById(tasks, task.id);
         this.notifyService.success(`Задача "${task.title}" успешно удалена!`);
-        this.itemsChanged.emit({
-          [task.status ? 'completedTasks' : 'uncompletedTasks']: tasks,
-        });
+        this.changeItems(task, null, tasks);
       });
   }
 }
