@@ -4,7 +4,7 @@
     [ngModel]="task.status"
     (ngModelChange)="taskStatusChange(task, $event)"
   ></mat-checkbox>
-  <div class="app-task-item__title">{{ task.title }}</div>
+  <div class="app-task-item__title" [matTooltip]="task.title">{{ task.title }}</div>
   <div [class]="['app-task-item__deadline']">
     {{ task.deadline | date : 'dd.MM.yyyy' }}
   </div>
